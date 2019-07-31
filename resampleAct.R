@@ -1,18 +1,22 @@
+#Resamples .act file from either a BAS Mk7 and Mk19 GLS tag to reflects other BAS GLS models eg. MK5, MK9, MK10, MK13, MK14, MK15
+#which sample for wet/dry every x seconds and make a record of the total number of samples wet every y minutes.
+
 resampleAct <- function(d.act = d.act, sampling_int = sampling_int, record_bin = record_bin){
-  #Expand the wet/dry status by the number of seconds in each state
+  #Expand the wet/dry status (**Wet** column) by the number of seconds in each state.
   act1 <- d.act[rep(seq_len(nrow(d.act)), d.act[['Activity']]), ]
-  #Now unpack the time to every second 
+  #Now unpack the **Date** column to every second.
   act1[['Date']] <- act1[['Date']] + sequence(d.act[['Activity']]) - 1
-  #Update the activity column to reflect state at one second intervals 
+  #Update the **Activity** column to reflect state at one second intervals.
   act1[['Activity']] <- 1L
-  #Cut to every 3 seconds
+  #Cut to every x seconds according to the sampling interval.
   act2 <- act1[!duplicated(cut(act1$Date, paste0(sampling_int, ' sec'), labels = F)), ]
-  #Sum number of samples in 10 minute period
+  #Sum number of **Wet** samples in y minute period according to the record bin.
   d.act <- aggregate(act2$Wet, list(Date = cut(act2$Date,  seq.POSIXt(min(act2$Date), max(act2$Date)+60*record_bin, by=paste0(record_bin," min")))), FUN = function(x) sum(x == 'wet'))
-  #Reformat to match import format
+  #Reformat to match import file structure.
   colnames(d.act)[2] <- "Activity"
   d.act$Valid <- "ok"
-  d.act$Julian <- as.numeric(NA)
+  d.act$Julian <- as.numeric(NA) #No-one uses the Julian date right?
   d.act <- d.act[,c("Valid", "Date", "Julian", "Activity")]
-return(d.act)
+  #Return the final binned data.
+  return(d.act)
 }
