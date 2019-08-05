@@ -2,6 +2,8 @@
 #which sample for wet/dry every x seconds and make a record of the total number of samples wet every y minutes.
 
 resampleAct <- function(d.act = d.act, sampling_int = sampling_int, record_bin = record_bin){
+  #remove errors
+  d.act <- d.act[grep("ERROR", d.act$Valid, invert=T),]
   #Expand the wet/dry status (**Wet** column) by the number of seconds in each state.
   act1 <- d.act[rep(seq_len(nrow(d.act)), d.act[['Activity']]), ]
   #Now unpack the **Date** column to every second.
@@ -15,8 +17,10 @@ resampleAct <- function(d.act = d.act, sampling_int = sampling_int, record_bin =
   #Reformat to match import file structure.
   colnames(d.act)[2] <- "Activity"
   d.act$Valid <- "ok"
-  d.act$Julian <- as.numeric(NA) #No-one uses the Julian date right?
-  d.act <- d.act[,c("Valid", "Date", "Julian", "Activity")]
-  #Return the final binned data.
+  d.act$Julian <- NA
+  d.act$Wet <- NA
+  d.act$Day <- NA
+  d.act$Time <- NA
+  d.act <- d.act[,c("Valid", "Date", "Julian", "Activity", "Wet", "Day", "Time")]
   return(d.act)
 }
