@@ -18,7 +18,7 @@ resampleAct <- function(d.act = d.act, sampling_int = sampling_int, record_bin =
   colnames(d.act)[2] <- "Activity"
   d.act$Valid <- "ok"
   #Original output is the number of seconds elapsed since the reference chosen when the file was processed, here we choose the common origin 1900-01-01
-  d.act$Julian <- julian(d.act$Date, origin = "1900-01-01")
+  d.act$Julian <- as.numeric(julian(d.act$Date, origin = "1900-01-01"))
   d.act$Wet <- NA
   d.act$Day <- floor(as.numeric(d.act$Julian))
   d.act$Time <- as.numeric(d.act$Julian) - d.act$Day
