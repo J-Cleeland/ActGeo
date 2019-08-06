@@ -14,6 +14,8 @@ resampleAct <- function(d.act = d.act, sampling_int = sampling_int, record_bin =
   act2 <- act1[!duplicated(cut(act1$Date, paste0(sampling_int, ' sec'), labels = F)), ]
   #Sum number of **Wet** samples in y minute period according to the record bin.
   d.act <- aggregate(act2$Wet, list(Date = cut(act2$Date,  seq.POSIXt(min(act2$Date), max(act2$Date)+60*record_bin, by=paste0(record_bin," min")))), FUN = function(x) sum(x == 'wet'))
+  #Fix date format
+  d.act$Date <- as.POSIXct(d.act$Date, format="%Y-%m-%d %H:%M:%S", tz="GMT")
   #Reformat to match import file structure.
   colnames(d.act)[2] <- "Activity"
   d.act$Valid <- "ok"
