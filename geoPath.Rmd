@@ -1,6 +1,6 @@
 #Quick way to access files/folders when GLS data is housed following BAStag recommendations eg. colony name > GLS tag name > raw data/processing code
 
-geo_path <- function(path1=path1, path2=path2, type=c("file", "folder")){
+geoPath <- function(path1=path1, path2=path2, type=c("file", "folder")){
   folder1 <- list.files(path=path1)
   folder1 <- folder1[grep(".xlsx", folder1, invert=T)]
   folder1 <- folder1[grep("makefile", folder1, invert=T)]
